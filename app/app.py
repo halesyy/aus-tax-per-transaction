@@ -68,8 +68,8 @@ while True:
         print(f"> Top tax type of '{top_tax_type}' is unknown!")
         exit()
 
-    print(f"> The income component amount was calculated to be '{earning_base}'")
-    print(f"> The top tax (GST/etc) amount was calculated to be '{top_tax}'")
+    print("> The income component amount was calculated to be '{:.2f}'".format(earning_base))
+    print("> The top tax (GST/etc) amount was calculated to be '{:.2f}'".format(top_tax))
 
     # Calculate the notional.
     notional = earning_base + top_tax
@@ -89,7 +89,7 @@ while True:
     tax_delta = total_tax_after - total_tax_before
 
     # Print out what everyone wants to know!
-    print(f"> The tax you should allot for this transaction is: '{tax_delta}'")
+    print("> The tax you should allot for this transaction is: '{:.2f}'".format(tax_delta))
 
     # Save.
     print("> Saving...")
