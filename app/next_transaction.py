@@ -37,9 +37,19 @@ if not os.path.exists("history.json"):
 history = json.load(open("history.json"))
 
 # Ask user for information.
-earning_base_ask = ask_till_type("> How much did you earn (base before tax)?: ", float)
-top_tax_ask = ask_till_type("> Is there any top-tax? (GST/NO): ", lambda r: r.lower() in ["gst", "no"])
+earning_base = ask_till_type("> How much did you earn (base before tax)?: ", float)
+top_tax_type = ask_till_type("> Is there any top-tax? (GST/NO): ", lambda r: r.lower() in ["gst", "no"])
+top_tax_type = top_tax_type.lower() # lower for normalization
 print("> Great, thanks!")
 
-print(earning_base_ask, top_tax_ask)
-#
+# Now to calculate the total notional.
+top_tax = 0
+if top_tax_type == "gst":
+    top_tax = earning_base * 0.1 # to be added for notional
+elif top_tax_type == "no":
+    top_tax = 0
+else:
+    print(f"> Top tax type of '{top_tax_type}' is unknown!")
+    exit()
+
+print(f"> The top tax amount was calculated to be '{top_tax}'")
