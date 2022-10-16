@@ -42,56 +42,58 @@ def ask_till_type(msg, cast):
             pass
         print("> Please try again!")
 
-# Make sure history exists.
-if not os.path.exists("history.json"):
-    open("history.json", "w").write("[]")
-history = json.load(open("history.json"))
+if __name__ == "__main__":
 
-while True:
+    # Make sure history exists.
+    if not os.path.exists("history.json"):
+        open("history.json", "w").write("[]")
+    history = json.load(open("history.json"))
 
-    # Ask user for information.
-    earning_base = ask_till_type("> Transaction income (base before tax)?: ", float)
-    top_tax_type = ask_till_type("> Is there any top-tax? (GST/NO/INCGST): ", lambda r: r.lower() in ["gst", "no", "incgst"])
-    top_tax_type = top_tax_type.lower() # lower for normalization
-    print("> Great, thanks!")
+    while True:
 
-    # Now to calculate the top tax piece amount.
-    top_tax = 0
-    if top_tax_type == "gst":
-        top_tax = earning_base * 0.1 # to be added for notional
-    elif top_tax_type == "no":
+        # Ask user for information.
+        earning_base = ask_till_type("> Transaction income (base before tax)?: ", float)
+        top_tax_type = ask_till_type("> Is there any top-tax? (GST/NO/INCGST): ", lambda r: r.lower() in ["gst", "no", "incgst"])
+        top_tax_type = top_tax_type.lower() # lower for normalization
+        print("> Great, thanks!")
+
+        # Now to calculate the top tax piece amount.
         top_tax = 0
-    elif top_tax_type == "incgst":
-        top_tax = earning_base / 11
-        earning_base = earning_base / 11 * 10
-    else:
-        print(f"> Top tax type of '{top_tax_type}' is unknown!")
-        exit()
+        if top_tax_type == "gst":
+            top_tax = earning_base * 0.1 # to be added for notional
+        elif top_tax_type == "no":
+            top_tax = 0
+        elif top_tax_type == "incgst":
+            top_tax = earning_base / 11
+            earning_base = earning_base / 11 * 10
+        else:
+            print(f"> Top tax type of '{top_tax_type}' is unknown!")
+            exit()
 
-    print("> The income component amount was calculated to be '{:.2f}'".format(earning_base))
-    print("> The top tax (GST/etc) amount was calculated to be '{:.2f}'".format(top_tax))
+        print("> The income component amount was calculated to be '{:.2f}'".format(earning_base))
+        print("> The top tax (GST/etc) amount was calculated to be '{:.2f}'".format(top_tax))
 
-    # Calculate the notional.
-    notional = earning_base + top_tax
+        # Calculate the notional.
+        notional = earning_base + top_tax
 
-    input("> Click enter to add this to the history...")
+        input("> Click enter to add this to the history...")
 
-    total_tax_before = calculate_full_income_tax(history)
+        total_tax_before = calculate_full_income_tax(history)
 
-    # Add to history.
-    history.append({
-        "income": earning_base, # income
-        "tax": top_tax,
-        "total": notional
-    })
+        # Add to history.
+        history.append({
+            "income": earning_base, # income
+            "tax": top_tax,
+            "total": notional
+        })
 
-    total_tax_after = calculate_full_income_tax(history)
-    tax_delta = total_tax_after - total_tax_before
+        total_tax_after = calculate_full_income_tax(history)
+        tax_delta = total_tax_after - total_tax_before
 
-    # Print out what everyone wants to know!
-    print("> The tax you should allot for this transaction is: '{:.2f}'".format(tax_delta))
+        # Print out what everyone wants to know!
+        print("> The tax you should allot for this transaction is: '{:.2f}'".format(tax_delta))
 
-    # Save.
-    print("> Saving...")
-    open("history.json", "w").write(json.dumps(history, indent=4))
-    print("----------------------------")
+        # Save.
+        print("> Saving...")
+        open("history.json", "w").write(json.dumps(history, indent=4))
+        print("----------------------------")
